@@ -81,7 +81,9 @@
 
 #ifdef ROOM_TYPE
 #define DEF_MAXRANGE 0x10
+#define READ_OFFSET 0
 #elif defined(DUCT_TYPE) || defined(DUCT6_TYPE)
+#define READ_OFFSET 12
 #define DEF_MAXRANGE 50
 #endif
 
@@ -385,9 +387,8 @@ int8_t set_max_range(asic_tetra_t *a, uint8_t num, uint8_t val)
 //For a duct anemometer, read from 12..28
 int8_t read_16_iq_points(asic_tetra_t *a, uint8_t num, uint8_t *dst, uint8_t from)
 {
-  #ifdef AUTORANGE
   return _read_reg(a, num, 0x1c + (from<<2), 64, &dst[0]);
-  #else
+  #if 0
     #ifdef ROOM_TYPE
       return _read_reg(a, num, 0x1c, 64, &dst[0]);
     #elif defined(DUCT_TYPE) || defined(DUCT6_TYPE)
@@ -581,6 +582,7 @@ int8_t asic_measure_just_iq(asic_tetra_t *a, uint8_t primary, measurement_t *m)
       goto fail;
     }
     m->tof_sf[slotindex] = (uint16_t)(holdbuf[0]) + (((uint16_t)holdbuf[1])<<8);
+    #ifdef AUTORANGE
     uint8_t startindex = holdbuf[3];
     if (startindex == 255) {
       m->offset[slotindex] = 255;
@@ -596,6 +598,14 @@ int8_t asic_measure_just_iq(asic_tetra_t *a, uint8_t primary, measurement_t *m)
         goto fail;
       }
     }
+    #else
+    m->offset[slotindex] = READ_OFFSET;
+    e = read_16_iq_points(a, i, &(m->sampledata[slotindex][0]), READ_OFFSET);
+    if (e) {
+      e = - (40+i);
+      goto fail;
+    }
+    #endif
     //printf("primary=%d rx=%d maxi=%d\n", primary, primary < 3 ? slotindex + 3 : slotindex, m->offset[slotindex]);
     slotindex++;
   }
