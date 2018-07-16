@@ -547,6 +547,7 @@ int8_t asic_measure_just_iq(asic_tetra_t *a, uint8_t primary, measurement_t *m)
 
     if (e) goto fail;
   }
+  xtimer_usleep(40);
   set_gint(a, 1);
   xtimer_usleep(20);
   set_gint(a, 0);
