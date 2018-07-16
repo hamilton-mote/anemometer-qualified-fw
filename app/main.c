@@ -411,6 +411,13 @@ void begin(void)
     }
     e = asic_fake_measure(&a);
     if (e) goto failure;
+    //Another type of fake measure
+    // for (int p = 0; p < NUMASICS; p ++)
+    // {
+    //   e = asic_measure_just_iq(&a, p, &sampm[p]);
+    //   if(e) goto failure;
+    // }
+
     for (int i = 0; i < 128; i++)
     {
       for (int p = 0; p < NUMASICS; p ++)

@@ -340,6 +340,12 @@ int8_t asic_calibrate(asic_tetra_t *a)
   int8_t e;
   set_gint(a, 0);
   if (i2c_acquire(a->asic_i2c)) return -2;
+  for (int i = 0; i < NUMASICS; i++)
+  {
+    e = set_opmode(a, i, 0x01);
+    if (e) goto end;
+  }
+  xtimer_usleep(30);
   for (int8_t i = 0; i < NUMASICS; i++)
   {
     e = prime_calibrate(a, i);
@@ -486,11 +492,19 @@ int8_t asic_fake_measure(asic_tetra_t *a)
     e = set_opmode(a, i, MODE_RX);
     if (e) goto fail;
   }
+  xtimer_usleep(300);
   set_gint(a, 1);
   xtimer_usleep(20);
   set_gint(a, 0);
   xtimer_usleep(SAMPLE_US);
   e = E_OK;
+
+  for (int i = 0; i < NUMASICS; i++)
+  {
+    e = set_opmode(a, i, 0x01);
+    if (e) goto fail;
+  }
+
   fail:
   i2c_release(a->asic_i2c);
   return e;
@@ -547,11 +561,11 @@ int8_t asic_measure_just_iq(asic_tetra_t *a, uint8_t primary, measurement_t *m)
 
     if (e) goto fail;
   }
-  xtimer_usleep(40);
+  xtimer_usleep(300);
   set_gint(a, 1);
   xtimer_usleep(20);
   set_gint(a, 0);
-
+  xtimer_usleep(40);
   //Workaround, set OPMODE to stop to prevent retrigger
   for (int i = 0; i < NUMASICS; i++)
   {
