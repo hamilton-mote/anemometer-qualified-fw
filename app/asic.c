@@ -81,10 +81,14 @@
 
 #ifdef ROOM_TYPE
 #define DEF_MAXRANGE 0x10
-#define READ_OFFSET 0
+//#define READ_OFFSET 0
 #elif defined(DUCT_TYPE) || defined(DUCT6_TYPE)
-#define READ_OFFSET 12
+//#define READ_OFFSET 12
 #define DEF_MAXRANGE 50
+#endif
+
+#ifndef READ_OFFSET
+#error READ_OFFSET undefined
 #endif
 
 #define SAMPLE_SIZE 70
