@@ -140,6 +140,8 @@ void sensor_config(void) {
   		DEBUG("ACCEL sensor OK\n");
   	}
 
+
+
 }
 
 void init_temperature_sensor(void) {
@@ -393,6 +395,7 @@ physical_sensors_t gphy;
 void begin(void)
 {
   sensor_config();
+  int failure_count = 0;
   asic_tetra_t a;
   int8_t e;
   initial_program(&a);
@@ -411,12 +414,6 @@ void begin(void)
     }
     e = asic_fake_measure(&a);
     if (e) goto failure;
-    //Another type of fake measure
-    // for (int p = 0; p < NUMASICS; p ++)
-    // {
-    //   e = asic_measure_just_iq(&a, p, &sampm[p]);
-    //   if(e) goto failure;
-    // }
 
     for (int i = 0; i < 128; i++)
     {
@@ -433,12 +430,17 @@ void begin(void)
       }
       xtimer_usleep(100000);
     }
-  }
+    failure_count = 0;
+    continue;
 failure:
-  asic_led(&a, 1,1,0);
-  printf("[run] encountered failure\n");
-  xtimer_usleep(A_LONG_TIME);
-  reboot();
+    failure_count++;
+    if (failure_count > 10) {
+      asic_led(&a, 1,1,0);
+      printf("[run] encountered failure\n");
+      xtimer_usleep(A_LONG_TIME);
+      reboot();
+    }
+  }
 }
 int main(void)
 {

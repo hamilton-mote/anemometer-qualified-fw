@@ -8,13 +8,13 @@
 #include "debug.h"
 
 #ifdef ROOM_TYPE
-#define BUILD 210
+#define BUILD 220
 #define NUMASICS 4
 #elif defined(DUCT_TYPE)
-#define BUILD 215
+#define BUILD 225
 #define NUMASICS 4
 #elif defined(DUCT6_TYPE)
-#define BUILD 217
+#define BUILD 227
 #define NUMASICS 6
 #endif
 
