@@ -330,6 +330,9 @@ void initial_program(asic_tetra_t *a)
   asic_led(a, 0,1,0);
   xtimer_usleep(100000); //100ms
 }
+
+void attempt_clockout_hack(i2c_t i2c);
+
 #if 0
 void dump_measurement(asic_tetra_t *a, measurement_t *m)
 {
@@ -428,14 +431,18 @@ void begin(void)
       {
         tx_measure(&a, &sampm[p], &gphy);
       }
-      xtimer_usleep(100000);
+      xtimer_usleep(400000);
     }
     failure_count = 0;
     continue;
 failure:
     failure_count++;
-    if (failure_count > 10) {
+    if (failure_count == 10) {
+      attempt_clockout_hack(I2C_0);
+    }
+    if (failure_count > 1000000) {
       asic_led(&a, 1,1,0);
+      while(1);
       printf("[run] encountered failure\n");
       xtimer_usleep(A_LONG_TIME);
       reboot();

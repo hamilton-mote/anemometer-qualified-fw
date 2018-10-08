@@ -3,7 +3,7 @@
 echo "You must ensure no variables are set in the makefile"
 set -ex
 
-VERSION=v3.6.0
+VERSION=v3.6.4
 
 make -j12 ANEM_TYPE=ROOM_TYPE READ_OFFSET=0
 cp bin/hamilton/hamilton_3c_qfw.bin binaries/room_4_offset_0_${VERSION}.bin

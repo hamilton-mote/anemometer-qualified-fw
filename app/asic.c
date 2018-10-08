@@ -126,7 +126,7 @@ void attempt_clockout_hack(i2c_t i2c) {
       gpio_write(GPIO_PIN(0,17), 1);
     xtimer_usleep(100);
   }
-  i2c_init_master(i2c, I2C_SPEED_NORMAL);
+  i2c_init_master(i2c, I2C_SPEED_FAST);
 }
 int8_t asic_init(asic_tetra_t *a, i2c_t pex_i2c, i2c_t asic_i2c)
 {
